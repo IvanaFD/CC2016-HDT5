@@ -23,3 +23,20 @@ def proceso(self, env, nombre, ram, cpu, stats):
     print(f"{self.name} llega al sistema (requiere {self.memory_needed} de RAM) en t={self.env.now:.2f}")
     env.process(self.new()) 
 
+def new(self):
+    #Solicita la ram que va utilizar sino hace la espera en la cola hasta que se libere ram para utilizar
+    with self.ram.get(self.memory_needed) as req:
+        yield req
+        print(f"{self.name} obtiene {self.memory_needed} de RAM y pasa a Ready en t={self.env.now:.2f}")
+        yield self.env.process(self.ready())  #Obtiene la ram y pasa a la cola de ready
+
+def ready(self):
+        #Pasa a la cola de ready
+        print(f"{self.name} pasa a Rrady en t={self.env.now:.2f}")
+        while self.instructions > 0:
+            #Hace la espera del CPU si esta ocupado para luego realizar sus intrucciones
+            with self.cpu.request() as req:
+                yield req
+                print(f"{self.name} pasa a Running en t={self.env.now:.2f}")
+                yield self.env.process(self.running())  # Una vez tenga el CPU espacio pasa a Running
+
