@@ -32,11 +32,28 @@ def new(self):
 
 def ready(self):
         #Pasa a la cola de ready
-        print(f"{self.name} pasa a Rrady en t={self.env.now:.2f}")
+        print(f"{self.name} pasa a Ready en t={self.env.now:.2f}")
         while self.instructions > 0:
             #Hace la espera del CPU si esta ocupado para luego realizar sus intrucciones
             with self.cpu.request() as req:
                 yield req
                 print(f"{self.name} pasa a Running en t={self.env.now:.2f}")
                 yield self.env.process(self.running())  # Una vez tenga el CPU espacio pasa a Running
+
+def running(self):
+    #Proceso ejecutandose en el CPU
+    yield self.env.timeout(1)
+    print(f"{self.name} pasa a Running en t={self.env.now:.2f}")
+
+    if instrucciones <= INSTRUCCIONES_POR_CICLO:
+         yield self.env.process(terminated(self))
+    else: 
+        decision = random.randint(1, 2)
+        if decision == 1:
+            yield self.env.process(self.ready())
+        else:
+            yield self.env.process(self.waiting())
+
+
+
 
