@@ -44,7 +44,7 @@ class Proceso:
     #Proceso ejecutandose en el CPU
     def running(self):
         yield self.env.timeout(1)
-        print(f"{self.name} pasa a Running en t={self.env.now:.2f}")
+        print(f"{self.env.now:.2f} - {self.name} pasa a Running en t={self.env.now:.2f}, faltan {self.instructions - INSTRUCCIONES_POR_CICLO, 0}")
 
         if self.instructions <= INSTRUCCIONES_POR_CICLO:
             yield self.env.process(terminated(self))
