@@ -23,15 +23,15 @@ def new(env, nombre, ram, cpu, memory_needed, instructions):
         print(f"{nombre} obtine {memory_needed} de RAM y pasa a ready en t= {env.now:.2f})")
         yield env.process(ready(env,nombre,ram,cpu,memory_needed, instructions))
 
-def ready(self):
-        #Pasa a la cola de ready
-        print(f"{self.name} pasa a Rrady en t={self.env.now:.2f}")
-        while self.instructions > 0:
-            #Hace la espera del CPU si esta ocupado para luego realizar sus intrucciones
-            with self.cpu.request() as req:
-                yield req
-                print(f"{self.name} pasa a Running en t={self.env.now:.2f}")
-                yield self.env.process(self.running())  # Una vez tenga el CPU espacio pasa a Running
+   
+def ready(env, nombre, ram, cpu, memory_needed, instructions):
+    print(f"{nombre} pasa a ready en t= {env.now:.2f})")
+    while instructions > 0:
+        with cpu.request() as req:
+            yield req
+            print(f"{nombre} pasa a running en t= {env.now:.2f})")
+            instructions = yield env.process(running(env,nombre,ram,cpu,memory_needed, instructions))
+
 
 #Proceso ejecutandose en el CPU
 def running(env, nombre, ram, cpu, memory_needed, instructions):
@@ -48,17 +48,16 @@ def running(env, nombre, ram, cpu, memory_needed, instructions):
             yield env.process(waiting(env, nombre, ram, cpu, memory_needed, instructions))
 
 
+def waiting(env, nombre, ram, cpu, memory_needed, instructions):
+    print(f"{nombre} pasa a waiting en t={env.now:.2f}")
+    yield env.timeout(random.randint(1, 2))
+    print(f"{nombre} vuelve a Ready desde Waiting en t={env.now:.2f}")
+    yield env.process(ready(env, nombre, ram, cpu, memory_needed, instructions))
 
-def waiting(self):
-    print(f"{self.name} pasa a waiting en t={self.env.now:.2f}")
-    yield self.env.timeout(random.randint(1, 2))
-    print(f"{self.name} vuelve a Ready desde Waiting en t={self.env.now:.2f}")
-    yield self.env.process(self.ready())
-
-def terminated(self):
+def terminated(env, nombre, ram, memory_needed):
     #Proceso termina y libera la RAM que estaba usando
-    print(f"{self.name} termina en t={self.env.now:.2f}")
-    self.ram.put(self.memory_needed)
+    print(f"{nombre} termina en t={env.now:.2f}")
+    yield ram.put(memory_needed)
 
 def create(env, num_procesos, ram, cpu):
     for i in range(num_procesos):
