@@ -9,8 +9,6 @@ INSTRUCCIONES_POR_CICLO = 3
 NUM_PROCESOS = 25
 INTERVALO_DE_EJECUCION = 1
 
- 
-
 def run(env, nombre, ram, cpu):
     instructions = random.radiant(1,10)
     memory_needed = random.radiant(1,10)
@@ -25,7 +23,6 @@ def new(env, nombre, ram, cpu, memory_needed, instructions):
         print(f"{nombre} obtine {memory_needed} de RAM y pasa a ready en t= {env.now:.2f})")
         yield env.process(ready(env,nombre,ram,cpu,memory_needed, instructions))
 
-   
 def ready(self):
         #Pasa a la cola de ready
         print(f"{self.name} pasa a Rrady en t={self.env.now:.2f}")
@@ -36,19 +33,19 @@ def ready(self):
                 print(f"{self.name} pasa a Running en t={self.env.now:.2f}")
                 yield self.env.process(self.running())  # Una vez tenga el CPU espacio pasa a Running
 
-    #Proceso ejecutandose en el CPU
-    def running(env, nombre, ram, cpu, memory_needed, instructions):
-        yield env.timeout(1)
-        instructions -= INSTRUCCIONES_POR_CICLO
-        print(f"{env.now:.2f} - {nombre} pasa a Running en t={env.now:.2f}, faltan {max(instructions, 0)} instrucciones.")
-        if instructions <= 0:
-            yield env.process(terminated(env, nombre, ram, memory_needed))
+#Proceso ejecutandose en el CPU
+def running(env, nombre, ram, cpu, memory_needed, instructions):
+    yield env.timeout(1)
+    instructions -= INSTRUCCIONES_POR_CICLO
+    print(f"{env.now:.2f} - {nombre} pasa a Running en t={env.now:.2f}, faltan {max(instructions, 0)} instrucciones.")
+    if instructions <= 0:
+        yield env.process(terminated(env, nombre, ram, memory_needed))
+    else:
+        decision = random.randint(1, 2)
+        if decision == 1:
+            yield env.process(ready(env, nombre, ram, cpu, memory_needed, instructions))
         else:
-            decision = random.randint(1, 2)
-            if decision == 1:
-                yield env.process(ready(env, nombre, ram, cpu, memory_needed, instructions))
-            else:
-                yield env.process(waiting(env, nombre, ram, cpu, memory_needed, instructions))
+            yield env.process(waiting(env, nombre, ram, cpu, memory_needed, instructions))
 
 
 
