@@ -12,7 +12,7 @@ INTERVALO_DE_EJECUCION = 1
 
 class Proceso:
     #Constructor de un proceso con sus datos iniciales de ram requerida e instrucciones que va realizar
-    def _init_(self, env, nombre, ram, cpu, stats): 
+    def __init__(self, env, nombre, ram, cpu, stats): 
         self.env = env
         self.name = nombre
         self.ram = ram
