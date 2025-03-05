@@ -55,6 +55,16 @@ class Proceso:
             else:
                 yield self.env.process(self.waiting())
 
+    def waiting(self):
+        print(f"{self.name} pasa a waiting en t={self.env.now:.2f}")
+        yield self.env.timeout(random.randint(1, 3))
+        print(f"{self.name} vuelve a Ready desde Waiting en t={self.env.now:.2f}")
+        yield self.env.process(self.ready())
+
+    def terminated(self):
+        print(f"{self.name} termina en t={self.env.now:.2f}")
+        self.ram.put(self.memory_needed)
+
 
 
 
