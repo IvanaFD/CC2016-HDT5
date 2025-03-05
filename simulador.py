@@ -20,9 +20,13 @@ class Proceso:
         self.instructions = random.randint(1, 10)
         self.memory_needed = random.randint(1, 10)
         self.start_time = env.now
-        self.stats = stats
         print(f"{self.name} llega al sistema (requiere {self.memory_needed} de RAM) en t={self.env.now:.2f}")
         env.process(self.new()) 
+
+    def run(self):
+        yield from self.new()
+        yield from self.ready()
+        yield from self.running()
 
     def new(self):
         #Solicita la ram que va utilizar sino hace la espera en la cola hasta que se libere ram para utilizar
@@ -44,10 +48,11 @@ class Proceso:
     #Proceso ejecutandose en el CPU
     def running(self):
         yield self.env.timeout(1)
-        print(f"{self.env.now:.2f} - {self.name} pasa a Running en t={self.env.now:.2f}, faltan {self.instructions - INSTRUCCIONES_POR_CICLO, 0}")
+        self.instructions -= INSTRUCCIONES_POR_CICLO
+        print(f"{self.env.now:.2f} - {self.name} pasa a Running en t={self.env.now:.2f}, faltan {max(self.instructions - INSTRUCCIONES_POR_CICLO, 0)} isntrucciones. ")
 
-        if self.instructions <= INSTRUCCIONES_POR_CICLO:
-            yield self.env.process(terminated(self))
+        if self.instructions <= 0:
+            yield self.env.process(self.terminated())
         else: 
             decision = random.randint(1, 2)
             if decision == 1:
@@ -62,9 +67,24 @@ class Proceso:
         yield self.env.process(self.ready())
 
     def terminated(self):
+        #Proceso termina y libera la RAM que estaba usando
         print(f"{self.name} termina en t={self.env.now:.2f}")
         self.ram.put(self.memory_needed)
 
+def create(env, num_procesos, ram, cpu):
+    for i in range(num_procesos):
+        yield env.timeout(random.expovariate(1.0 / INTERVALO_ENTRADA))  # Genera procesos en intervalos aleatorios
+        env.process(Proceso(env, f'Proceso-{i+1}', ram, cpu).run()) 
 
+#Configuracion simulacion
+env = simpy.Environment()
+ram = simpy.Container(env, capacity=1000, init=1000)  # Configura la memoria
+cpu = simpy.Resource(env, capacity=1)  # Configura solo un CPU
+
+#Inicia la creacion de procesos
+env.process(create(env, NUM_PROCESOS, ram, cpu))
+
+#Iniciar la simulación
+env.run()
 
 
