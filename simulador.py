@@ -23,15 +23,17 @@ def new(env, nombre, ram, cpu, memory_needed, instructions):
         print(f"{nombre} obtine {memory_needed} de RAM y pasa a ready en t= {env.now:.2f})")
         yield env.process(ready(env,nombre,ram,cpu,memory_needed, instructions))
 
-def ready(self):
-        #Pasa a la cola de ready
-        print(f"{self.name} pasa a Rrady en t={self.env.now:.2f}")
-        while self.instructions > 0:
-            #Hace la espera del CPU si esta ocupado para luego realizar sus intrucciones
-            with self.cpu.request() as req:
-                yield req
-                print(f"{self.name} pasa a Running en t={self.env.now:.2f}")
-                yield self.env.process(self.running())  # Una vez tenga el CPU espacio pasa a Running
+   
+def ready(env, nombre, ram, cpu, memory_needed, instructions):
+    print(f"{nombre} pasa a ready en t= {env.now:.2f})")
+    while instructions > 0:
+        with cpu.request() as req:
+            yield req
+            print(f"{nombre} pasa a running en t= {env.now:.2f})")
+            instructions = yield env.process(running(env,nombre,ram,cpu,memory_needed, instructions))
+
+
+    
 
 #Proceso ejecutandose en el CPU
 def running(env, nombre, ram, cpu, memory_needed, instructions):
