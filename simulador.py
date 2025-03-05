@@ -46,19 +46,20 @@ class Proceso:
                     yield self.env.process(self.running())  # Una vez tenga el CPU espacio pasa a Running
 
     #Proceso ejecutandose en el CPU
-    def running(self):
-        yield self.env.timeout(1)
-        self.instructions -= INSTRUCCIONES_POR_CICLO
-        print(f"{self.env.now:.2f} - {self.name} pasa a Running en t={self.env.now:.2f}, faltan {max(self.instructions - INSTRUCCIONES_POR_CICLO, 0)} isntrucciones. ")
-
-        if self.instructions <= 0:
-            yield self.env.process(self.terminated())
-        else: 
+    def running(env, nombre, ram, cpu, memory_needed, instructions):
+        yield env.timeout(1)
+        instructions -= INSTRUCCIONES_POR_CICLO
+        print(f"{env.now:.2f} - {nombre} pasa a Running en t={env.now:.2f}, faltan {max(instructions, 0)} instrucciones.")
+        if instructions <= 0:
+            yield env.process(terminated(env, nombre, ram, memory_needed))
+        else:
             decision = random.randint(1, 2)
             if decision == 1:
-                yield self.env.process(self.ready())
+                yield env.process(ready(env, nombre, ram, cpu, memory_needed, instructions))
             else:
-                yield self.env.process(self.waiting())
+                yield env.process(waiting(env, nombre, ram, cpu, memory_needed, instructions))
+
+
 
     def waiting(self):
         print(f"{self.name} pasa a waiting en t={self.env.now:.2f}")
