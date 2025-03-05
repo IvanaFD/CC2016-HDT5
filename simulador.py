@@ -63,7 +63,7 @@ def terminated(self):
 def create(env, num_procesos, ram, cpu):
     for i in range(num_procesos):
         yield env.timeout(random.expovariate(1.0 / INTERVALO_ENTRADA))  # Genera procesos en intervalos aleatorios
-        env.process(Proceso(env, f'Proceso-{i+1}', ram, cpu).run()) 
+        env.process(run(env, f'Proceso-{i+1}', ram, cpu)) 
 
 #Configuracion simulacion
 env = simpy.Environment()
