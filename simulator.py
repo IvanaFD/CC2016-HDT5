@@ -1,3 +1,14 @@
+
+#  Universidad del Valle de Guatemala
+#  Algoritmos y Estructuras de Datos - Sección 31
+#  Hoja de Trabajo 5
+#  Integrantes:
+#  Diana Sosa 241040
+#  Biancka Raxón 24960
+#  Ivana Figueroa 24785
+ 
+
+
 # Referencias: 
 # - https://www.youtube.com/watch?v=BqZxmbhJ14Q
 
@@ -9,8 +20,8 @@ import numpy as np
 RANDOM_SEED = 42
 CANTIDAD_MEMORIA_RAM = 100
 INSTRUCCIONES_POR_CICLO = 6 #Instrucciones por ciclo que ejecutará el CPU
-INTERVALO_ENTRADA = 10  # Intervalo de llegada de los procesos
-NUMERO_PRCESOS = 25  # Numero de procesos a simular
+INTERVALO_ENTRADA = 1  # Intervalo de llegada de los procesos
+NUMERO_PRCESOS = 200 # Numero de procesos a simular
 
 random.seed(RANDOM_SEED)
 
