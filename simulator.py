@@ -1,4 +1,3 @@
-
 #  Universidad del Valle de Guatemala
 #  Algoritmos y Estructuras de Datos - Sección 31
 #  Hoja de Trabajo 5
@@ -6,9 +5,7 @@
 #  Diana Sosa 241040
 #  Biancka Raxón 24960
 #  Ivana Figueroa 24785
- 
-
-
+#
 # Referencias: 
 # - https://www.youtube.com/watch?v=BqZxmbhJ14Q
 
@@ -68,7 +65,7 @@ def generador_procesos(env, num_procesos, intervalo, ram, cpu, tiempos):
 def simular(intervalo, num_procesos):
     env = simpy.Environment()
     ram = simpy.Container(env, init=CANTIDAD_MEMORIA_RAM, capacity=CANTIDAD_MEMORIA_RAM)
-    cpu = simpy.Resource(env, capacity=1)
+    cpu = simpy.Resource(env, capacity=2)
     tiempos = []
     env.process(generador_procesos(env, num_procesos, intervalo, ram, cpu, tiempos))
     env.run()
