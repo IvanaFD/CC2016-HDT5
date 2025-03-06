@@ -8,7 +8,7 @@ import numpy as np
 # Parámetros de simulación
 RANDOM_SEED = 42
 CANTIDAD_MEMORIA_RAM = 100
-INSTRUCCIONES_POR_CICLO = 3 #Instrucciones por ciclo que ejecutará el CPU
+INSTRUCCIONES_POR_CICLO = 6 #Instrucciones por ciclo que ejecutará el CPU
 INTERVALO_ENTRADA = 10  # Intervalo de llegada de los procesos
 NUMERO_PRCESOS = 25  # Numero de procesos a simular
 
